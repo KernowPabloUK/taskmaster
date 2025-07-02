@@ -11,24 +11,30 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Import environment variables
-try:
-    from env import SECRET_KEY
-except ImportError:
-    raise ImportError("env.py file is required. Please create it with your SECRET_KEY.")
+# Load environment variables from env.py if it exists
+if os.path.isfile(os.path.join(BASE_DIR, 'env.py')):
+    import sys
+    sys.path.insert(0, str(BASE_DIR))
+    import env
+    # Set environment variables from env.py
+    os.environ.setdefault('SECRET_KEY', getattr(env, 'SECRET_KEY', ''))
+    os.environ.setdefault('DATABASE_URL', getattr(env, 'DATABASE_URL', ''))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY is now imported from env.py
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
 
 ALLOWED_HOSTS = []
 
@@ -79,10 +85,7 @@ WSGI_APPLICATION = 'taskmaster.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
 }
 
 
