@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ['created_at', 'updated_at']
     search_fields = ['name']
     readonly_fields = ['created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Category Information', {
             'fields': ('name',)
@@ -34,7 +34,7 @@ class TaskAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at', 'is_overdue', 'status_display']
     list_editable = ['completed']
     date_hierarchy = 'due_date'
-    
+
     fieldsets = (
         ('Task Information', {
             'fields': ('title', 'category', 'due_date', 'completed')
@@ -48,6 +48,6 @@ class TaskAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('category')
